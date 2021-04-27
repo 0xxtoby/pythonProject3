@@ -4,17 +4,31 @@ import re
 
 import scrapy
 
-from bcy.items import BcyItem
+
 from scrapy import cmdline
 
-from bcy.items import BcyItem
+from pythonProject3.bcy.items import  BcyItem
 
 
 class PcycosSpider(scrapy.Spider):
     name = 'pcycos'
     # allowed_domains = ['bcy.cn']
 
-    start_urls = ['https://bcy.net/apiv3/common/getFeeds?refer=channel&direction=loadmore&cid=6618800694038102275&_signature=lUArjQAAAACojcXarY3iqpVAK5AAPU-']
+
+
+
+    def start_requests(self):
+        start_urls = [
+            'https://bcy.net/apiv3/common/getFeeds?refer=channel&direction=loadmore&cid=6618800694038102275&_signature=lUArjQAAAACojcXarY3iqpVAK5AAPU-']
+
+        cookle = {
+            'mobile_set': 'no'
+            , 'tt_webid': '6949768694361818638'
+        }
+        for i in range(5):
+            yield scrapy.Request(url='https://bcy.net/apiv3/common/getFeeds?refer=channel&direction=loadmore&cid=6618800694038102275&_signature=lUArjQAAAACojcXarY3iqpVAK5AAPU-',dont_filter=True
+                                 ,cookies=cookle
+                                 )
 
     def parse(self, response):
         print(response.status)
@@ -30,16 +44,18 @@ class PcycosSpider(scrapy.Spider):
             li_url=li['item_detail']['item_id']
             print(li_url)
 
+            cookle = {
+                'mobile_set':'no'
+                ,'tt_webid':'6949768694361818638'
+            }
 
-
-            yield  scrapy.Request(url='http://bcy.net/item/detail/'+li_url, callback=self.jpgre)
+            yield  scrapy.Request(url='http://bcy.net/item/detail/'+li_url, callback=self.jpgre,dont_filter=False)
             # yield  scrapy.Request(url='http://www.baidu.com', callback=self.jpgre)
             # if i==1:
             #     break
             # else:
             #     print(i)
-        for 变量 in range(10):
-            yield scrapy.Request(url='https://bcy.net/apiv3/common/getFeeds?refer=channel&direction=loadmore&cid=6618800694038102275&_signature=lUArjQAAAACojcXarY3iqpVAK5AAPU-')
+
         # print(json_pcy)
     def jpgre(self, response):
         item=BcyItem()
